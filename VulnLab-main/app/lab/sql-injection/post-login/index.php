@@ -11,29 +11,36 @@ exit();
 
 session_start();
 
-if(isset($_POST['username']) && isset($_POST['password']) ){
+if(isset($_POST['username']) && isset($_POST['password'])) {
+    
+    $usr = $_POST['username'];
+    $pwd = $_POST['password'];
+
 	
-	$usr=$_POST['username'];
-	$pwd=$_POST['password'];
+    $sql = "SELECT username, password FROM users WHERE username=? AND password=?";
 
-	$sql = "SELECT username,password FROM users WHERE username='" . $usr . "' AND password='" . $pwd . "'";
+	//Preparem la consulta perque el 'statement' prepari, executi, verifiqui y redireccioni la consulta.
+    if ($stmt = $mysqli->prepare($sql)) {//prepara
 
+        $stmt->bind_param("ss", $usr, $pwd);//assigna els paràmetres
 
-if ($result = $mysqli->query($sql)) {
-while($obj = $result->fetch_object()){
-	$_SESSION['username'] = $usr;
-	header("Location: admin.php");
-	exit;
+        $stmt->execute();//executa
+
+        $stmt->store_result();//guarda el resultat
+
+        if ($stmt->num_rows > 0) {//verifica
+            $_SESSION['username'] = $usr;
+            header("Location: admin.php");//redirecciona
+            exit;
+        }
+
+        $stmt->close();//tanca el 'statement'
+    } else {
+        print($mysqli->error);
+    }
 }
-}
-
-elseif($mysqli->error){
-print($mysqli->error);
-}		
-	}	
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
