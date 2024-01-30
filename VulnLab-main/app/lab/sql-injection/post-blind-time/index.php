@@ -12,7 +12,12 @@
     if ( isset($_POST['email']) ){
 
         $email = $_POST['email'];
-        $user = $db -> query("SELECT * FROM users WHERE email = '{$email}'");  
+        
+        //Preparem el 'statement' per protegir la pàgina d'SQL Injection
+        $stmt = $db->prepare("SELECT * FROM users WHERE email = :correu");
+        $stmt->bindParam(':correu', $email);//assigna els paràmetres
+        $stmt->execute();//executa
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);//obté el resultat i el guarda com un array
 
         $status="success";
     }
