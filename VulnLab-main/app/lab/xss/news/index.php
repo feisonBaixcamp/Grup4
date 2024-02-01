@@ -84,7 +84,7 @@ $q=$db->query("SELECT * FROM links");
         while ($cikti = $q->fetch(PDO::FETCH_ASSOC)) {
             echo '<tr>';
             echo '<th>' . $i++ . '</th>';
-            echo '<td><a href="'.$cikti['link'].'"style="text-decoration: none;">' . $cikti['title'] . '</a></td>';
+            echo '<td><a href="'.htmlspecialchars($cikti['link'], ENT_QUOTES, 'UTF-8').'" style="text-decoration: none;">' . htmlspecialchars($cikti['title'], ENT_QUOTES, 'UTF-8') . '</a></td>';
             echo '<td><a href="" style="text-align: right;text-decoration: none;"><i style="color: aliceblue;margin-right: 5px; " class="flaticon-up-arrow buton"></i></a><a href="" style="text-align: right;text-decoration: none;"><i style="color: aliceblue; " class="flaticon-down-arrow buton"></i></a></td>';
             echo '</tr>';
         }
