@@ -10,7 +10,8 @@ if (isset($_POST['search'])) {
 
 
     try {
-        $query = $db->prepare("SELECT * FROM stocks WHERE name = '" . $search . "'");
+        $query = $db->prepare("SELECT * FROM stocks WHERE name = :name");
+        $query->execute(['name' => $search]);
     } catch (PDOException $e) {
     }
     $query->execute();
