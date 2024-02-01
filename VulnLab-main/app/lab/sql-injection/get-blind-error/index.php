@@ -30,8 +30,11 @@ if (isset($_POST['prev'])) {
 
 if (isset($_GET['img'])) {
     $img = $_GET['img'];
+    $stmt = $db->prepare("SELECT * FROM images WHERE id = :img");
+    $stmt->bindParam(':img', $img, PDO::PARAM_INT);
+    $stmt->execute();
+    $data = $stmt->fetch();
 
-    $user = $db->query("SELECT * FROM images WHERE id = $img");
 }
 
 ?>
@@ -67,9 +70,9 @@ if (isset($_GET['img'])) {
                                 if (!empty($error[2])) {
                                     echo $error[2];
                                 } else {
-                                    $data = $user->fetch();
+                                    $data = $stmt->fetch();
                                 }
-
+                            
                                 if(isset($data)){
                                     echo '<img class="shadow bg-body rounded img-fluid" style="width:765px; height: 400px; object-fit: cover; padding : 0; margin-bottom: 0;" src="' . $data['path'] . '"/>';
                                 }
