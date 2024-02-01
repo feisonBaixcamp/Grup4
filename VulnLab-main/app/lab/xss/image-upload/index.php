@@ -65,8 +65,8 @@ if(isset($_POST["submit"])) {
         <div class="container-wrapper">
             <div class="row pt-5 mt-5 mb-3 d-flex justify-content-center">
                 <div class="row col-md-4 text-center d-flex justify-content-center shadow-lg p-3 mb-5 rounded">
-                    <img src="<?php echo $path['path'] ?>
-                            " style="width: 300px;margin-top: 8px;" class="rounded-circle" alt="" srcset="">
+                <img src="<?php echo htmlspecialchars($path['path'], ENT_QUOTES, 'UTF-8') ?>
+                            " style="width: 300px; margin-top: 8px;" class="rounded-circle" alt="" srcset="">                    <form action="#" method="post" enctype="multipart/form-data">
                     <form action="#" method="post" enctype="multipart/form-data">
                         <div class="">
                             <label for="input_image" class="form-label mt-1"><?php echo $strings['text']; ?></label>
