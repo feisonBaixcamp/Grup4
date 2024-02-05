@@ -41,7 +41,8 @@ function encodeB($char){
             <div class="bottom justify-content-center" style="text-align: center;">
                 <?php
                 if (isset($_GET['img'])) {
-                    echo '<img class="shadow-lg bg-body rounded" style="width:500px;padding : 0; margin-bottom: 0;" src="' . encodeB($_GET['img']) . '.jpg"/>';
+                    $imgValue = htmlspecialchars($_GET['img'], ENT_QUOTES, 'UTF-8');
+                    echo '<img class="shadow-lg bg-body rounded" style="width:500px; padding: 0; margin-bottom: 0;" src="' . $imgValue . '.jpg"/>';
                 }
                 ?>
             </div>
