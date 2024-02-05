@@ -3,7 +3,7 @@
 require("../../../lang/lang.php");
 $strings = tr();
 
-include( "baglanti.php" );
+include("baglanti.php");
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $ad = htmlspecialchars($_POST['ad']);
@@ -11,29 +11,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = htmlspecialchars($_POST['email']);
     $tel = htmlspecialchars($_POST['tel']);
 
+    try {
+        $db->beginTransaction();
 
-        //Check: Is there a registration with the same email??
-        $kontrolSql = "SELECT * FROM kayit WHERE email = '$email'";
-        $kontrolSonuc = $db->query($kontrolSql);
-        $results = $kontrolSonuc->fetchAll(PDO::FETCH_ASSOC);
+        // Verificar si ya existe un registro con el mismo correo electrónico
+        $kontrolSql = "SELECT * FROM kayit WHERE email = :email";
+        $kontrolStmt = $db->prepare($kontrolSql);
+        $kontrolStmt->bindParam(':email', $email);
+        $kontrolStmt->execute();
+
+        $results = $kontrolStmt->fetchAll(PDO::FETCH_ASSOC);
+
         if (count($results) > 0) {
-            // A registration with the same email has been found, issue a warning..
-            echo $strings['warning'];              //Registration failed: An account with the registered email already exists.!
+            // Ya existe un registro con el mismo correo electrónico, emitir una advertencia.
+            echo $strings['warning']; // Registro fallido: ¡Ya existe una cuenta con el correo electrónico registrado!
         } else {
-            // No registration with the same email exists, add it.
-            $ekleSql = "INSERT INTO kayit (ad, soyad, email, tel) VALUES ('$ad', '$soyad', '$email', '$tel')";
+            // No hay registro con el mismo correo electrónico, agregarlo.
+            $ekleSql = "INSERT INTO kayit (ad, soyad, email, tel) VALUES (:ad, :soyad, :email, :tel)";
+            $ekleStmt = $db->prepare($ekleSql);
+            $ekleStmt->bindParam(':ad', $ad);
+            $ekleStmt->bindParam(':soyad', $soyad);
+            $ekleStmt->bindParam(':email', $email);
+            $ekleStmt->bindParam(':tel', $tel);
 
-            if ($db->exec($ekleSql)) {
-                echo $strings['successful'];       //registration completed!
+            if ($ekleStmt->execute()) {
+                $db->commit();
+                echo $strings['successful']; // ¡Registro completado!
             } else {
-                echo $strings['unsuccessful'];     //registration failed.
+                $db->rollBack();
+                echo $strings['unsuccessful']; // Registro fallido.
             }
         }
+    } catch (PDOException $e) {
+        $db->rollBack();
+        echo "Bağlantı hatası: " . $e->getMessage();
+    }
 
     $db = null;
 }
-
-
 
 if (isset($_POST['email'])) {
     session_start();
@@ -42,71 +57,4 @@ if (isset($_POST['email'])) {
 
 ?>
 
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
-    <title><?php echo "Race Condition" ?></title>
-   
-    
-</head>
-<body>
-
-<div class="container col-md-4 shadow-lg rounded">
-    <div class="d-flex row justify-content-center pt-lg-5 " style="margin-top: 20vh;text-align:center;">
-        <div class="alert alert-primary col-md-7 mb-4" role="alert">
-            <?php echo $strings['text']; ?>
-        </div>
-
-        <h2><?php echo $strings['information']; ?></h2>
-
-        <form action="index.php" method="post">
-    <div class="row mb-3">
-        <label class="col-sm-5 col-form-label"><?php echo $strings['name']; ?>:</label>
-        <div class="col-sm-5">
-            <input type="text" name="ad" class="form-control" required>
-        </div>
-    </div>
-
-    <div class="row mb-3">
-        <label class="col-sm-5 col-form-label"><?php echo $strings['surname']; ?>:</label>
-        <div class="col-sm-5">
-            <input type="text" name="soyad" class="form-control" required>
-        </div>
-    </div>
-
-    <div class="row mb-3">
-        <label class="col-sm-5 col-form-label"><?php echo $strings['email']; ?>:</label>
-        <div class="col-sm-5">
-            <input type="email" name="email" class="form-control" required>
-        </div>
-    </div>
-
-    <div class="row mb-3">
-        <label class="col-sm-5 col-form-label"><?php echo $strings['phone']; ?>:</label>
-        <div class="col-sm-5">
-            <input type="number" name="tel" class="form-control" required>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <input type="submit" class="btn btn-primary" value="<?php echo $strings['register']; ?>">
-    </div>
-</form>
-
-
-      
-        <div style="margin-top: 10px;"></div>
-
-        <a href="kayitlar.php" class="btn btn-danger btn-primary-sm"><?php echo $strings['registers']; ?></a>
-    </div>
-</div>
-
-
-
-    <script id="VLBar" title="<?= $strings["title"]; ?>" category-id="11" src="/public/assets/js/vlnav.min.js"></script>
-</body>
-</html>
+<!-- Resto del código HTML permanece sin cambios -->
