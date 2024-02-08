@@ -2,9 +2,10 @@
 require("../../../lang/lang.php");
 $strings = tr();
 
-// Función para escapar y representar de forma segura los datos
-function safe_output($data) {
-    return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+// Función para escapar y eliminar scripts de la entrada del usuario
+function sanitize_input($data) {
+    // Eliminar etiquetas <script> y su contenido
+    return preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $data);
 }
 
 $db = new PDO('sqlite:database.db');
@@ -12,6 +13,10 @@ $db = new PDO('sqlite:database.db');
 if (isset($_POST['uname']) && isset($_POST['passwd'])) {
     $username = $_POST['uname'];
     $password = $_POST['passwd'];
+
+    // Sanitizar la entrada del usuario para eliminar scripts
+    $username = sanitize_input($username);
+    $password = sanitize_input($password);
 
     $q = $db->prepare("SELECT * FROM users WHERE username=:username AND password=:password");
     $q->execute(array(
@@ -26,7 +31,7 @@ if (isset($_POST['uname']) && isset($_POST['passwd'])) {
         header("Location: stored.php");
         exit;
     } else {
-        echo '<h1>' . safe_output($strings['wrong_username_or_pass']) . '</h1>';
+        echo '<h1>' . htmlspecialchars($strings['wrong_username_or_pass']) . '</h1>';
     }
 }
 ?>
@@ -42,7 +47,7 @@ if (isset($_POST['uname']) && isset($_POST['passwd'])) {
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
 
-    <title><?php echo safe_output($strings['title']); ?></title>
+    <title><?php echo htmlspecialchars($strings['title']); ?></title>
 </head>
 
 <body>
@@ -52,23 +57,23 @@ if (isset($_POST['uname']) && isset($_POST['passwd'])) {
 
             <form action="#" method="POST" style="text-align: center;margin-top: 20px;padding:30px;">
                 <div class="row mb-3">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label"><?php echo safe_output($strings['user']); ?></label>
+                    <label for="inputEmail3" class="col-sm-2 col-form-label"><?php echo htmlspecialchars($strings['user']); ?></label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" name="uname" id="inputEmail3">
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <label for="inputPassword3" class="col-sm-2 col-form-label"><?php echo safe_output($strings['pass']); ?></label>
+                    <label for="inputPassword3" class="col-sm-2 col-form-label"><?php echo htmlspecialchars($strings['pass']); ?></label>
                     <div class="col-sm-10">
                         <input type="password" class="form-control" name="passwd" id="inputPassword3">
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary"><?php echo safe_output($strings['submit']); ?></button>
-                <p><?php echo safe_output($strings['sample_credentials']); ?></p>
+                <button type="submit" class="btn btn-primary"><?php echo htmlspecialchars($strings['submit']); ?></button>
+                <p><?php echo htmlspecialchars($strings['sample_credentials']); ?></p>
             </form>
         </div>
     </div>
-    <script id="VLBar" title="<?php echo safe_output($strings['title']); ?>" category-id="1" src="/public/assets/js/vlnav.min.js"></script>
+    <script id="VLBar" title="<?php echo htmlspecialchars($strings['title']); ?>" category-id="1" src="/public/assets/js/vlnav.min.js"></script>
 </body>
 
 </html>
