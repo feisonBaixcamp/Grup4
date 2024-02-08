@@ -13,7 +13,7 @@ $strings = tr();
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
-  <title><?php echo htmlspecialchars($strings['title']);  ?></title>
+  <title><?php echo htmlspecialchars($strings['title']); ?></title>
 </head>
 
 <body>
@@ -23,7 +23,7 @@ $strings = tr();
     if (isset($_GET['q'])) {
       $q = htmlspecialchars($_GET['q']);
       echo '<div class="alert alert-danger" style="margin-top: 30vh;" role="alert" >';
-      echo htmlspecialchars($strings['text']) . ' <b>' . $q . ' </b> ';
+      echo htmlspecialchars($strings['text']) . ' <b>' . htmlspecialchars($q) . ' </b> ';
       echo '<a href="index.php">' . htmlspecialchars($strings['try']) . '</a>';
       echo "</div>";
     } else {
