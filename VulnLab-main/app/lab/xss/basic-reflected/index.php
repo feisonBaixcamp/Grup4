@@ -4,19 +4,18 @@ $strings = tr();
 
 $db = new PDO('sqlite:database.db');
 
+function sanitize_input($input) {
+    // Eliminar etiquetas HTML y PHP
+    $input = strip_tags($input);
+    // Reemplazar caracteres especiales HTML
+    $input = htmlspecialchars($input);
+    return $input;
+}
+
 if (isset($_GET['q'])) {
-    $q = $_GET['q'];
-    // Validar la entrada del usuario para asegurarse de que solo contiene caracteres alfanuméricos y espacios
-    if (!preg_match('/^[a-zA-Z0-9\s]+$/', $q)) {
-        echo '<div class="alert alert-danger" style="margin-top: 30vh;" role="alert" >';
-        echo htmlspecialchars($strings['invalid_input']);
-        echo '<a href="index.php">' . htmlspecialchars($strings['try']) . '</a>';
-        echo "</div>";
-        exit; // Detener la ejecución si la entrada no es válida
-    }
-    
+    $q = sanitize_input($_GET['q']);
     echo '<div class="alert alert-danger" style="margin-top: 30vh;" role="alert" >';
-    echo '' . htmlspecialchars($strings['text']) . ' <b>' . $q . '</b> ';
+    echo htmlspecialchars($strings['text']) . ' <b>' . $q . '</b> ';
     echo '<a href="index.php">' . htmlspecialchars($strings['try']) . '</a>';
     echo "</div>";
 } else {
