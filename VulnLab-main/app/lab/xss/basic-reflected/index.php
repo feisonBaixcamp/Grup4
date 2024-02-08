@@ -21,9 +21,9 @@ $strings = tr();
     <?php
 
     if (isset($_GET['q'])) {
-      $q = urlencode($_GET['q']); // Codificar la entrada del usuario
+      $q = $_GET['q'];
       echo '<div class="alert alert-danger" style="margin-top: 30vh;" role="alert" >';
-      echo htmlspecialchars($strings['text']) . ' <b>' . htmlspecialchars(urldecode($q)) . ' </b> ';
+      echo htmlspecialchars($strings['text']) . ' <b>' . htmlspecialchars(urlencode($q)) . ' </b> ';
       echo '<a href="index.php">' . htmlspecialchars($strings['try']) . '</a>';
       echo "</div>";
     } else {
@@ -37,4 +37,8 @@ $strings = tr();
 
   </div>
 
-  <script id="
+  <script id="VLBar" title="<?= htmlspecialchars($strings['title']) ?>" category-id="1" src="/public/assets/js/vlnav.min.js"></script>
+
+</body>
+
+</html>
