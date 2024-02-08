@@ -5,11 +5,7 @@ $strings = tr();
 $db = new PDO('sqlite:database.db');
 
 if (isset($_GET['q'])) {
-    $q = $_GET['q'];
-    // Eliminar cualquier etiqueta HTML y secuencias de escape que puedan representar un script
-    $q = strip_tags($q);
-    $q = htmlspecialchars($q);
-    
+    $q = htmlspecialchars($_GET['q'], ENT_QUOTES, 'UTF-8'); // Escapar la entrada del usuario
     echo '<div class="alert alert-danger" style="margin-top: 30vh;" role="alert" >';
     echo '' . htmlspecialchars($strings['text']) . ' <b>' . $q . '</b> ';
     echo '<a href="index.php">' . htmlspecialchars($strings['try']) . '</a>';
