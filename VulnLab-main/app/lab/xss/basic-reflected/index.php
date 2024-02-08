@@ -7,22 +7,13 @@ function safe_output($data) {
     return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
 }
 
-// Función para validar la entrada del usuario
-function validate_input($input) {
-    // Eliminar espacios en blanco al principio y al final
-    $input = trim($input);
-    
-    // Eliminar cualquier etiqueta HTML
-    $input = strip_tags($input);
-    
-    // Eliminar cualquier secuencia de escape de JavaScript
-    $input = str_replace(array('<', '>'), '', $input);
-    
-    return $input;
-}
-
 // Validar la entrada del usuario si existe
-$q = isset($_GET['q']) ? validate_input($_GET['q']) : '';
+$q = isset($_GET['q']) ? $_GET['q'] : '';
+
+// Filtrar la entrada del usuario para evitar la ejecución de scripts
+$q = strip_tags($q); // Eliminar etiquetas HTML
+$q = str_replace(array('<', '>'), '', $q); // Eliminar secuencias de escape de JavaScript
+$q = trim($q); // Eliminar espacios en blanco al principio y al final
 
 ?>
 
