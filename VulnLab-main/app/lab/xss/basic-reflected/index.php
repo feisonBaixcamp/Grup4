@@ -10,8 +10,8 @@ function safe_output($data) {
 // Validar la entrada del usuario si existe
 $q = isset($_GET['q']) ? $_GET['q'] : '';
 
-// Filtrar la entrada del usuario para permitir solo caracteres alfanuméricos y espacios en blanco
-$q_filtered = preg_replace('/[^a-zA-Z0-9\s]+/', '', $q);
+// Escapar caracteres especiales en la entrada del usuario
+$q_escaped = htmlspecialchars($q, ENT_QUOTES, 'UTF-8');
 
 ?>
 
@@ -32,14 +32,14 @@ $q_filtered = preg_replace('/[^a-zA-Z0-9\s]+/', '', $q);
   <div class="container d-flex justify-content-center align-items-center h-100 mx-auto">
     <?php
 
-    if (!empty($q_filtered)) {
+    if (!empty($q_escaped)) {
       echo '<div class="alert alert-danger" style="margin-top: 30vh;" role="alert" >';
-      echo safe_output($strings['text']) . ' <b>' . safe_output($q_filtered) . ' </b> ';
+      echo safe_output($strings['text']) . ' <b>' . safe_output($q_escaped) . ' </b> ';
       echo '<a href="index.php">' . safe_output($strings['try']) . '</a>';
       echo "</div>";
     } else {
       echo '<form method="GET" action="#" style="margin-top: 30vh;" class="row g-3 col-md-6 row justify-content-center mx-auto">';
-      echo '<input class="form-control" type="text" pattern="[a-zA-Z0-9\s]*" title="Solo caracteres alfanuméricos y espacios son permitidos" placeholder="' . safe_output($strings['search']) . '" name="q">';
+      echo '<input class="form-control" type="text" placeholder="' . safe_output($strings['search']) . '" name="q">';
       echo '<button type="submit" class="col-md-3 btn btn-primary mb-3">' . safe_output($strings['s_button']) . '</button>';
       echo '</form>';
     }
