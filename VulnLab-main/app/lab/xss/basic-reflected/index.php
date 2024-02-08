@@ -7,18 +7,12 @@ function safe_output($data) {
     return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
 }
 
-// Conexión a la base de datos
 $db = new PDO('sqlite:database.db');
 
-// Manejo de Sesiones
-session_start();
-
-// Validar credenciales de inicio de sesión
 if (isset($_POST['uname']) && isset($_POST['passwd'])) {
     $username = $_POST['uname'];
     $password = $_POST['passwd'];
 
-    // Consulta preparada para evitar inyección SQL
     $q = $db->prepare("SELECT * FROM users WHERE username=:username AND password=:password");
     $q->execute(array(
         ':username' => $username,
@@ -27,11 +21,12 @@ if (isset($_POST['uname']) && isset($_POST['passwd'])) {
 
     $_select = $q->fetch();
     if ($_select) {
+        session_start();
         $_SESSION['username'] = $username;
         header("Location: stored.php");
         exit;
     } else {
-        echo '<h1>wrong username or pass</h1>';
+        echo '<h1>' . safe_output($strings['wrong_username_or_pass']) . '</h1>';
     }
 }
 ?>
@@ -57,13 +52,13 @@ if (isset($_POST['uname']) && isset($_POST['passwd'])) {
 
             <form action="#" method="POST" style="text-align: center;margin-top: 20px;padding:30px;">
                 <div class="row mb-3">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label">User</label>
+                    <label for="inputEmail3" class="col-sm-2 col-form-label"><?php echo safe_output($strings['user']); ?></label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" name="uname" id="inputEmail3">
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <label for="inputPassword3" class="col-sm-2 col-form-label">Pass</label>
+                    <label for="inputPassword3" class="col-sm-2 col-form-label"><?php echo safe_output($strings['pass']); ?></label>
                     <div class="col-sm-10">
                         <input type="password" class="form-control" name="passwd" id="inputPassword3">
                     </div>
@@ -73,7 +68,7 @@ if (isset($_POST['uname']) && isset($_POST['passwd'])) {
             </form>
         </div>
     </div>
-    <script id="VLBar" title="<?= safe_output($strings['title']) ?>" category-id="1" src="/public/assets/js/vlnav.min.js"></script>
+    <script id="VLBar" title="<?php echo safe_output($strings['title']); ?>" category-id="1" src="/public/assets/js/vlnav.min.js"></script>
 </body>
 
 </html>
