@@ -6,6 +6,24 @@ $strings = tr();
 function safe_output($data) {
     return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
 }
+
+// Función para validar la entrada del usuario
+function validate_input($input) {
+    // Eliminar espacios en blanco al principio y al final
+    $input = trim($input);
+    
+    // Eliminar cualquier etiqueta HTML
+    $input = strip_tags($input);
+    
+    // Eliminar cualquier secuencia de escape de JavaScript
+    $input = str_replace(array('<', '>'), '', $input);
+    
+    return $input;
+}
+
+// Validar la entrada del usuario si existe
+$q = isset($_GET['q']) ? validate_input($_GET['q']) : '';
+
 ?>
 
 <!doctype html>
@@ -25,10 +43,9 @@ function safe_output($data) {
   <div class="container d-flex justify-content-center align-items-center h-100 mx-auto">
     <?php
 
-    if (isset($_GET['q'])) {
-      $q = safe_output($_GET['q']);
+    if (!empty($q)) {
       echo '<div class="alert alert-danger" style="margin-top: 30vh;" role="alert" >';
-      echo safe_output($strings['text']) . ' <b>' . $q . ' </b> ';
+      echo safe_output($strings['text']) . ' <b>' . safe_output($q) . ' </b> ';
       echo '<a href="index.php">' . safe_output($strings['try']) . '</a>';
       echo "</div>";
     } else {
