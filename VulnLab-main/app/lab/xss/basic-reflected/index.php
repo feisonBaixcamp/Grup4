@@ -11,7 +11,7 @@ function safe_output($data) {
 $q = isset($_GET['q']) ? $_GET['q'] : '';
 
 // Escapar caracteres especiales en la entrada del usuario
-$q_escaped = htmlspecialchars($q, ENT_QUOTES, 'UTF-8');
+$q_escaped = safe_output($q);
 
 ?>
 
@@ -34,7 +34,7 @@ $q_escaped = htmlspecialchars($q, ENT_QUOTES, 'UTF-8');
 
     if (!empty($q_escaped)) {
       echo '<div class="alert alert-danger" style="margin-top: 30vh;" role="alert" >';
-      echo safe_output($strings['text']) . ' <b>' . safe_output($q_escaped) . ' </b> ';
+      echo safe_output($strings['text']) . ' <b>' . $q_escaped . ' </b> ';
       echo '<a href="index.php">' . safe_output($strings['try']) . '</a>';
       echo "</div>";
     } else {
