@@ -10,10 +10,8 @@ function safe_output($data) {
 // Validar la entrada del usuario si existe
 $q = isset($_GET['q']) ? $_GET['q'] : '';
 
-// Filtrar la entrada del usuario para evitar la ejecución de scripts
-$q = strip_tags($q); // Eliminar etiquetas HTML
-$q = str_replace(array('<', '>'), '', $q); // Eliminar secuencias de escape de JavaScript
-$q = trim($q); // Eliminar espacios en blanco al principio y al final
+// Codificar la entrada del usuario para evitar la ejecución de scripts
+$q_encoded = htmlspecialchars($q, ENT_QUOTES, 'UTF-8');
 
 ?>
 
@@ -34,9 +32,9 @@ $q = trim($q); // Eliminar espacios en blanco al principio y al final
   <div class="container d-flex justify-content-center align-items-center h-100 mx-auto">
     <?php
 
-    if (!empty($q)) {
+    if (!empty($q_encoded)) {
       echo '<div class="alert alert-danger" style="margin-top: 30vh;" role="alert" >';
-      echo safe_output($strings['text']) . ' <b>' . safe_output($q) . ' </b> ';
+      echo safe_output($strings['text']) . ' <b>' . safe_output($q_encoded) . ' </b> ';
       echo '<a href="index.php">' . safe_output($strings['try']) . '</a>';
       echo "</div>";
     } else {
