@@ -2,10 +2,10 @@
 require("../../../lang/lang.php");
 $strings = tr();
 
-// Función para escapar y eliminar scripts de la entrada del usuario
-function sanitize_input($data) {
-    // Eliminar etiquetas <script> y su contenido
-    return preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $data);
+// Función para limpiar la entrada de usuario permitiendo solo caracteres seguros
+function clean_input($data) {
+    // Permitir solo caracteres alfanuméricos, espacios y guiones bajos
+    return preg_replace('/[^a-zA-Z0-9_\s]/', '', $data);
 }
 
 $db = new PDO('sqlite:database.db');
@@ -14,9 +14,9 @@ if (isset($_POST['uname']) && isset($_POST['passwd'])) {
     $username = $_POST['uname'];
     $password = $_POST['passwd'];
 
-    // Sanitizar la entrada del usuario para eliminar scripts
-    $username = sanitize_input($username);
-    $password = sanitize_input($password);
+    // Limpiar la entrada del usuario permitiendo solo caracteres seguros
+    $username = clean_input($username);
+    $password = clean_input($password);
 
     $q = $db->prepare("SELECT * FROM users WHERE username=:username AND password=:password");
     $q->execute(array(
