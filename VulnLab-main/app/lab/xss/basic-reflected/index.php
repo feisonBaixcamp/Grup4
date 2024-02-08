@@ -7,12 +7,33 @@ function safe_output($data) {
     return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
 }
 
-// Validar la entrada del usuario si existe
-$q = isset($_GET['q']) ? $_GET['q'] : '';
+// Conexión a la base de datos
+$db = new PDO('sqlite:database.db');
 
-// Escapar caracteres especiales en la entrada del usuario
-$q_escaped = safe_output($q);
+// Manejo de Sesiones
+session_start();
 
+// Validar credenciales de inicio de sesión
+if (isset($_POST['uname']) && isset($_POST['passwd'])) {
+    $username = $_POST['uname'];
+    $password = $_POST['passwd'];
+
+    // Consulta preparada para evitar inyección SQL
+    $q = $db->prepare("SELECT * FROM users WHERE username=:username AND password=:password");
+    $q->execute(array(
+        ':username' => $username,
+        ':password' => $password
+    ));
+
+    $_select = $q->fetch();
+    if ($_select) {
+        $_SESSION['username'] = $username;
+        header("Location: stored.php");
+        exit;
+    } else {
+        echo '<h1>wrong username or pass</h1>';
+    }
+}
 ?>
 
 <!doctype html>
@@ -25,31 +46,34 @@ $q_escaped = safe_output($q);
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+
     <title><?php echo safe_output($strings['title']); ?></title>
 </head>
 
 <body>
-    <div class="container d-flex justify-content-center align-items-center h-100 mx-auto">
-        <?php
+    <div class="container d-flex justify-content-center">
+        <div class="shadow p-3 mb-5 rounded column" style="text-align: center; max-width: 1000px;margin-top:15vh;">
+            <h4>VULNLAB</h4>
 
-        if (!empty($q_escaped)) {
-            echo '<div class="alert alert-danger" style="margin-top: 30vh;" role="alert" >';
-            echo safe_output($strings['text']) . ' <b>' . $q_escaped . ' </b> ';
-            echo '<a href="index.php">' . safe_output($strings['try']) . '</a>';
-            echo "</div>";
-        } else {
-            echo '<form method="GET" action="#" style="margin-top: 30vh;" class="row g-3 col-md-6 row justify-content-center mx-auto">';
-            echo '<input class="form-control" type="text" placeholder="' . safe_output($strings['search']) . '" name="q">';
-            echo '<button type="submit" class="col-md-3 btn btn-primary mb-3">' . safe_output($strings['s_button']) . '</button>';
-            echo '</form>';
-        }
-
-        ?>
-
+            <form action="#" method="POST" style="text-align: center;margin-top: 20px;padding:30px;">
+                <div class="row mb-3">
+                    <label for="inputEmail3" class="col-sm-2 col-form-label">User</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="uname" id="inputEmail3">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label for="inputPassword3" class="col-sm-2 col-form-label">Pass</label>
+                    <div class="col-sm-10">
+                        <input type="password" class="form-control" name="passwd" id="inputPassword3">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary"><?php echo safe_output($strings['submit']); ?></button>
+                <p><?php echo safe_output($strings['sample_credentials']); ?></p>
+            </form>
+        </div>
     </div>
-
-    <script id="VLBar" title="<?php echo safe_output($strings['title']); ?>" category-id="1" src="/public/assets/js/vlnav.min.js"></script>
-
+    <script id="VLBar" title="<?= safe_output($strings['title']) ?>" category-id="1" src="/public/assets/js/vlnav.min.js"></script>
 </body>
 
 </html>
