@@ -5,7 +5,16 @@ $strings = tr();
 $db = new PDO('sqlite:database.db');
 
 if (isset($_GET['q'])) {
-    $q = htmlspecialchars($_GET['q'], ENT_QUOTES, 'UTF-8'); // Escapar la entrada del usuario
+    $q = $_GET['q'];
+    // Validar la entrada del usuario para asegurarse de que solo contiene caracteres alfanuméricos y espacios
+    if (!preg_match('/^[a-zA-Z0-9\s]+$/', $q)) {
+        echo '<div class="alert alert-danger" style="margin-top: 30vh;" role="alert" >';
+        echo htmlspecialchars($strings['invalid_input']);
+        echo '<a href="index.php">' . htmlspecialchars($strings['try']) . '</a>';
+        echo "</div>";
+        exit; // Detener la ejecución si la entrada no es válida
+    }
+    
     echo '<div class="alert alert-danger" style="margin-top: 30vh;" role="alert" >';
     echo '' . htmlspecialchars($strings['text']) . ' <b>' . $q . '</b> ';
     echo '<a href="index.php">' . htmlspecialchars($strings['try']) . '</a>';
