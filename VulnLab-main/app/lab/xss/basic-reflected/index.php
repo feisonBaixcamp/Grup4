@@ -11,7 +11,7 @@ function safe_output($data) {
 $q = isset($_GET['q']) ? $_GET['q'] : '';
 
 // Filtrar la entrada del usuario para permitir solo caracteres alfanuméricos y espacios en blanco
-$q_filtered = preg_replace('/[^a-zA-Z0-9\s]/', '', $q);
+$q_filtered = preg_replace('/[^a-zA-Z0-9\s]+/', '', $q);
 
 ?>
 
