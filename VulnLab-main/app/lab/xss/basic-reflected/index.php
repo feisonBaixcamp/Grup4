@@ -5,9 +5,7 @@ $strings = tr();
 $db = new PDO('sqlite:database.db');
 
 if (isset($_GET['q'])) {
-    $q = $_GET['q'];
-    // Eliminar cualquier carácter que no sea alfanumérico o espacio en blanco
-    $q = preg_replace('/[^a-zA-Z0-9\s]/', '', $q);
+    $q = htmlspecialchars($_GET['q']); // Escapar la entrada del usuario
     echo '<div class="alert alert-danger" style="margin-top: 30vh;" role="alert" >';
     echo '' . htmlspecialchars($strings['text']) . ' <b>' . $q . '</b> ';
     echo '<a href="index.php">' . htmlspecialchars($strings['try']) . '</a>';
