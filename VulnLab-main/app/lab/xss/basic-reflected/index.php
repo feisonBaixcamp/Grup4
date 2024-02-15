@@ -20,7 +20,7 @@ if (isset($_GET['q'])) {
     echo "</div>";
 } else {
     echo '<form method="GET" action="#" style="margin-top: 30vh;" class="row g-3 col-md-6 row justify-content-center mx-auto">';
-    echo '<input class="form-control" type="text" placeholder="' . htmlspecialchars($strings['search']) . '" name="q">';
+    echo '<input class="form-control" type="text" placeholder="' . htmlspecialchars($strings['search']) . '" name="q" oninput="this.value = this.value.replace(/[<>]/g, \'\')">';
     echo '<button type="submit" class="col-md-3 btn btn-primary mb-3">' . htmlspecialchars($strings['s_button']) . '</button>';
     echo '</form>';
 }
