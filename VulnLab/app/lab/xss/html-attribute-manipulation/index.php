@@ -26,7 +26,7 @@ $strings = tr();
             <div class="bodyx row p-4">
                 <form action="#" method="get" class="">
                     <label for="name" class="form-label"><?php echo htmlspecialchars($strings['name']); ?></label>
-                    <input type="text" name="name" class="form-control">
+                    <input type="text" name="name" class="form-control" readonly> <!-- Añade el atributo readonly -->
                     <button type="submit" class="btn btn-success " style="margin-top: 10px;"><?php echo htmlspecialchars($strings['button']); ?></button>
                 </form>
             </div>
