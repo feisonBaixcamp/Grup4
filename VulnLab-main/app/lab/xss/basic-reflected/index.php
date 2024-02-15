@@ -45,6 +45,11 @@ if (isset($_GET['q'])) {
         <script id="VLBar" title="<?= htmlspecialchars($strings['title'], ENT_QUOTES) ?>" category-id="1" src="/public/assets/js/vlnav.min.js"></script>
 
     </div>
+    <script>
+        // Codificar la salida JavaScript correctamente
+        var title = "<?php echo htmlspecialchars($strings['title'], ENT_QUOTES); ?>";
+        // Usar la variable 'title' de manera segura en el script
+    </script>
 </body>
 
 </html>
