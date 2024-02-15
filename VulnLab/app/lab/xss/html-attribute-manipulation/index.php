@@ -24,9 +24,9 @@ $strings = tr();
                 <h4><?php echo htmlspecialchars($strings['text']); ?></h4>
             </div>
             <div class="bodyx row p-4">
-                <form action="#" method="get" class="">
+                <form id="nameForm" class="">
                     <label for="name" class="form-label"><?php echo htmlspecialchars($strings['name']); ?></label>
-                    <input type="text" name="name" class="form-control" readonly> <!-- Añade el atributo readonly -->
+                    <input type="text" name="name" id="nameInput" class="form-control" readonly>
                     <button type="submit" class="btn btn-success " style="margin-top: 10px;"><?php echo htmlspecialchars($strings['button']); ?></button>
                 </form>
             </div>
@@ -40,6 +40,14 @@ $strings = tr();
         }
         ?>
     </div>
+    <script>
+        // Script para manipular el formulario y redireccionar
+        document.getElementById('nameForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evitar el envío del formulario
+            var name = document.getElementById('nameInput').value; // Obtener el valor del campo de entrada
+            window.location.href = 'ticket.php?name=' + name; // Redireccionar a ticket.php con el nombre como parámetro
+        });
+    </script>
     <script id="VLBar" title="<?= htmlspecialchars($strings['title']) ?>" category-id="1" src="/public/assets/js/vlnav.min.js"></script>
 </body>
 
