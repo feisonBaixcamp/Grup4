@@ -5,10 +5,8 @@ $strings = tr();
 
 
 $db = new PDO('sqlite:database.db');
-
 session_start();
-
-if (!isset($_SESSION['username']) || empty($_SESSION['username'])) {
+if (!isset($_SESSION['username'])) {
     header("Location: chat-room-login.php");
     exit;
 }
