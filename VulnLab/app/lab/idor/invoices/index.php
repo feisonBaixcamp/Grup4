@@ -1,31 +1,39 @@
 <?php
 
-    require("../../../lang/lang.php");
-    $strings = tr();
+require("../../../lang/lang.php");
+$strings = tr();
 
-    $db = new PDO('sqlite:database.db'); 
+$db = new PDO('sqlite:database.db'); 
 
-    $user_id = 1;
+session_start();
+// Assuming a user's session is established with login, we use session to securely fetch the user's ID.
+$user_id = $_SESSION['user_id'] ?? null;
 
-    if( isset($_POST['view']) ){
-        header("Location: index.php?invoice_id=$user_id");
-    }
+if(isset($_POST['view'])){
+    header("Location: index.php?invoice_id=" . urlencode($user_id));
+}
 
-    if( isset($_GET['invoice_id']) ){ 
-        $query = $db -> prepare("SELECT * FROM idor_invoices WHERE id=:id");
-        $query -> execute(array(
-            'id' => $_GET['invoice_id']
-        ));
-        $row = $query -> fetch();
+if(isset($_GET['invoice_id'])){ 
+    // Validate that the invoice belongs to the user
+    $query = $db->prepare("SELECT * FROM idor_invoices WHERE id=:id AND user_id=:user_id");
+    $query->execute([
+        'id' => $_GET['invoice_id'],
+        'user_id' => $user_id
+    ]);
+    $row = $query->fetch();
 
+    if($row){
         header("Content-type: application/pdf");
         header("Content-Disposition: inline; filename=invoice.pdf");
         @readfile($row['file_url']);
+    } else {
+        // Handle unauthorized access or invoice not found
+        echo "Unauthorized access or invoice not found.";
+        exit;
     }
-
+}
 
 ?>
-
 
 <!DOCTYPE html>
 <html lang="<?= $strings['lang']; ?>">
@@ -81,5 +89,3 @@
     <script id="VLBar" title="<?= $strings['title']; ?>" category-id="3" src="/public/assets/js/vlnav.min.js"></script>
 </body>
 </html>
-
-

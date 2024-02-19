@@ -8,25 +8,29 @@ try {
 } catch (PDOException $e) {
     echo $e->getMessage();
 }
-$cookiepath = "/";
 
 ob_start();
 session_start();
 
-if (isset($_COOKIE['userid'])) {
-    $userid = $_COOKIE['userid'];
+// Initialize control variable
+$control = 0;
+
+// Check if user is logged in
+if (isset($_SESSION['userid'])) {
+    $userid = $_SESSION['userid'];
     $control = 1;
-    setcookie("userid", "", time() - 3600, "$cookiepath");
 } else {
-    $userid = 3;
-    $control = 0;
+    // Redirect to login page or set a default behavior for non-logged-in users
+    header('Location: login.php');
+    exit;
 }
 
+// Prepare query to fetch user profile based on session userid
 $query = $db->prepare("SELECT * FROM profiles WHERE id=?");
 $query->execute([$userid]);
-// row count
+
 if ($result = $query->fetch(PDO::FETCH_ASSOC)) {
-    $userid = $result['id'];
+    // Assign profile information to variables
     $name = $result['namesurname'];
     $job = $result['job'];
     $about = $result['about'];
@@ -35,6 +39,7 @@ if ($result = $query->fetch(PDO::FETCH_ASSOC)) {
     $location = $result['location'];
     $picture_url = $result['picture_url'];
 } else {
+    // Handle user not found scenario
     $name = "";
     $job = "";
     $about = $strings['user_notfound'];
@@ -43,8 +48,8 @@ if ($result = $query->fetch(PDO::FETCH_ASSOC)) {
     $location = "";
     $picture_url = "";
 }
-?>
 
+?>
 
 <!DOCTYPE html>
 <html lang="<?= $strings['lang']; ?>">
@@ -63,7 +68,7 @@ if ($result = $query->fetch(PDO::FETCH_ASSOC)) {
 
         <div class="container-wrapper">
             <?php
-            if ($control == 0) {
+            if ($control == 1) {
             ?>
                 <div class="row pt-5 mt-5 mb-3">
                     <div class="col-md-3"></div>
@@ -92,8 +97,9 @@ if ($result = $query->fetch(PDO::FETCH_ASSOC)) {
                     </div>
                     <div class="col-md-3"></div>
                 </div>
-            <?php } else if ($control == 1) {
-                include("./profiles.php");
+            <?php
+            } else {
+                // Optionally handle unauthorized access or redirect
             }
             ?>
 
@@ -107,9 +113,8 @@ if ($result = $query->fetch(PDO::FETCH_ASSOC)) {
 
 <script>
     let about_button = document.getElementById('about-button');
-    // when clicked about button go to the ./info/ with create cookie
     about_button.addEventListener('click', () => {
-        document.cookie = "userid=<?= $userid ?>;path=<?= $cookiepath ?>";
+        // Adjust as needed for session-based handling or redirect
         window.location.href = "./";
     });
 </script>

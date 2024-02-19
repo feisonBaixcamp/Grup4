@@ -1,63 +1,41 @@
 <?php
-    require("../../../lang/lang.php");
-    $strings = tr();
+require("../../../lang/lang.php");
+$strings = tr();
 
-    $db = new PDO('sqlite:database.db');
+$db = new PDO('sqlite:database.db');
 
-    $my_addressID = 1; //fixed address my_address
+session_start();
+$loggedInUserId = $_SESSION['userId'] ?? null;
 
-    $query = $db -> prepare("SELECT * FROM idor_address_entry WHERE id=:id");
-    $query -> execute(array(
-        'id' => $my_addressID
-    ));
-    $my_address = $query -> fetch();
+$my_addressID = getAddressIdForUser($loggedInUserId);
 
+$query = $db->prepare("SELECT * FROM idor_address_entry WHERE id=:id AND userId=:userId");
+$query->execute([
+    'id' => $my_addressID,
+    'userId' => $loggedInUserId
+]);
+$my_address = $query->fetch();
 
-    if( isset($_POST['update']) && isset($_POST['address']) ){
+if (isset($_POST['update']) && isset($_POST['address'])) {
+    if (!empty(trim($_POST['address']))) {
+        $update = $db->prepare("UPDATE idor_address_entry SET address=:address WHERE id=:id AND userId=:userId");
+        $update->execute([
+            'id' => $my_addressID,
+            'address' => $_POST['address'],
+            'userId' => $loggedInUserId
+        ]);
 
-        if( !empty(trim($_POST['address'])) ){ //address not empty
-            $update = $db -> prepare("UPDATE idor_address_entry SET address=:address WHERE id=:id");
-            $update -> execute(array(
-                'id' => $my_addressID,
-                'address' => $_POST['address']
-            ));
-    
-            $update_status = $update -> RowCount();
-    
-            if($update_status){ // success
-                header("Location: index.php?msg=success");
-                exit;
-            }
-        }else{
-            $status = 1;
+        $update_status = $update->RowCount();
+        if ($update_status) {
+            header("Location: index.php?msg=success");
+            exit;
         }
-
-
+    } else {
+        $status = 1;
     }
-
-    if( isset($_POST['order']) ){
-
-        if( empty(trim($my_address['address'])) ){ //if empty
-
-            $status = 2;
-
-        }else{
-
-            $query = $db -> prepare("SELECT * FROM idor_address_entry WHERE id=:id");
-            $query -> execute(array(
-                'id' => $_POST['addressID']
-            ));
-            $order_address = $query -> fetch();
-
-            $status = 3;
-
-        }
-
-    }
-
+}
 
 ?>
-
 
 <!DOCTYPE html>
 <html lang="<?= $strings['lang']; ?>">
@@ -80,7 +58,7 @@
 
                     <h1><?= $strings['title']; ?></h1>
 
-                    <a href="reset.php"><button type="button" href="" class="btn btn-secondary btn-sm"><?= $strings['reset_button']; ?></button></a>
+                    <a href="reset.php"><button type="button" class="btn btn-secondary btn-sm"><?= $strings['reset_button']; ?></button></a>
                     
                 </div>
                 <div class="col-md-3"></div>
@@ -101,20 +79,18 @@
                     <h3 class="mb-3"><?= $strings['middle_title']; ?></h3>
 
                     <?php   
-                        if( isset($_GET['msg']) ){
-                            if($_GET['msg'] == "success"){
+                        if (isset($_GET['msg'])) {
+                            if ($_GET['msg'] == "success") {
                                 echo '<div class="alert alert-success" role="alert"> <b>'.$strings['alert_success'].'</b> </div>';
                             }
                         }
 
-                        if( isset($status)){
-                            if($status == 1){
+                        if (isset($status)) {
+                            if ($status == 1) {
                                 echo '<div class="alert alert-warning" role="alert"> <b>'.$strings['alert_address_empty'].'</b> </div>';
-                            }
-                            elseif($status == 2){
+                            } elseif ($status == 2) {
                                 echo '<div class="alert alert-warning" role="alert"> <b>'.$strings['alert_register_address'].'</b> </div>';
-                            }
-                            elseif($status == 3){
+                            } elseif ($status == 3) {
                                 echo '<div class="alert alert-success" role="alert">  <b>'.$strings['alert_order_success'].'</b> <hr>'
                                 .$strings['alert_order_address'].' <b> '.$order_address['address'].' </b> 
                                 <br>'
@@ -133,21 +109,7 @@
                         </div>
                         <div class="btn-group w-100 mb-5">
                             <button class="btn btn-warning" type="submit" name="update"><?= $strings['update_button']; ?></button>
-                            <button class="btn btn-primary" type="submit" name="order"><?= $strings['order_button']; ?></button>
-                        </div>
-                    </form>
+                            <button class="btn btn-primary" type="submit" name="order"><?= $strings['order_button
 
-                </div>
-                <div class="col-md-3"></div>
-            </div>
-
-        </div>
-
-    </div>
-
-    <script id="VLBar" title="<?= $strings['title']; ?>" category-id="3" src="/public/assets/js/vlnav.min.js"></script>
-    
-</body>
-</html>
 
 
