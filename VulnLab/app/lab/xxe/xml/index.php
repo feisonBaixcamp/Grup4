@@ -14,7 +14,7 @@
         <div class="col-md-3"></div>   
         <div class="col-md-6">
             <h1 class="mt-4 text-grey"><?= $strings['title'] ?></h1>
-            <p class="mt-4"><button class="w-75 btn btn-primary" type="button" onclick="sendXMLRequest()"><?= $strings['button'] ?></button></p>
+            <p class="mt-4"><button class="w-75 btn btn-primary" type="button" onclick="xmlLoad()"><?= $strings['button'] ?></button></p>
         </div>
         <div class="col-md-3"></div> 
     </div>
@@ -24,7 +24,7 @@
 
 <script type="text/javascript">
 
-function sendXMLRequest(){
+function xmlLoad(){
   var xhttp = new XMLHttpRequest();
  
   xhttp.open("POST", "test.php", true);
@@ -32,7 +32,7 @@ function sendXMLRequest(){
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       console.log(this.responseText);
-      // No se realiza la redirección aquí
+      // Aquí no realizamos redirección
     }
   };
   xhttp.send('<city><![CDATA[<title>Karabuk</title><amount>293</amount>]]></city>');
