@@ -14,7 +14,7 @@
         <div class="col-md-3"></div>   
         <div class="col-md-6">
             <h1 class="mt-4 text-grey"><?= $strings['title'] ?></h1>
-            <p class="mt-4"><button class="w-75 btn btn-primary" type="button" onclick="xmlLoad()"><?= $strings['button'] ?></button></p>
+            <p class="mt-4"><button class="w-75 btn btn-primary" type="button" onclick="sendXMLRequest()"><?= $strings['button'] ?></button></p>
         </div>
         <div class="col-md-3"></div> 
     </div>
@@ -24,7 +24,7 @@
 
 <script type="text/javascript">
 
-function xmlLoad(){
+function sendXMLRequest(){
   var xhttp = new XMLHttpRequest();
  
   xhttp.open("POST", "test.php", true);
