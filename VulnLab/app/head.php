@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!--    Document Title-->
-  <title>VulnLab</title>
+  <title>Grup 4</title>
   <!--    Favicons-->
   <link rel="shortcut icon" type="image/x-icon" href="/public/assets/img/favicons/favicon.png">
   <!--    Stylesheets-->
