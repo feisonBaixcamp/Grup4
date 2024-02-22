@@ -3,7 +3,7 @@ session_start();
 
 require(__DIR__ . '/../../../lang/lang.php');
 $strings = tr();
-require("brute.php");
+require("brute.php"); 
 
 if (isset($_SESSION['login_attempts']) && $_SESSION['login_attempts'] >= 3) {
     echo '<p>Has excedido el número máximo de intentos. Por favor, inténtalo más tarde.</p>';
@@ -11,6 +11,8 @@ if (isset($_SESSION['login_attempts']) && $_SESSION['login_attempts'] >= 3) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+
     if ($credenciales_incorrectas) {
         if (!isset($_SESSION['login_attempts'])) {
             $_SESSION['login_attempts'] = 1;
@@ -23,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
