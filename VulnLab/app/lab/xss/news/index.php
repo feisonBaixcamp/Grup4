@@ -8,9 +8,9 @@ $db = new PDO('sqlite:hackernews.db');
 
 // Verificar si se enviaron datos del formulario
 if (isset($_POST['link']) && isset($_POST['title'])) {
-    // Obtener los datos del formulario
-    $link = $_POST['link'];
-    $title = $_POST['title'];
+    // Obtener los datos del formulario y limpiarlos para evitar inyección de código
+    $link = htmlspecialchars($_POST['link'], ENT_QUOTES, 'UTF-8');
+    $title = htmlspecialchars($_POST['title'], ENT_QUOTES, 'UTF-8');
 
     try {
         // Preparar la consulta SQL con marcadores de posición
@@ -22,9 +22,8 @@ if (isset($_POST['link']) && isset($_POST['title'])) {
             ':link' => $link
         ]);
 
-        // Redireccionar después de la inserción exitosa
-        header("Location: index.php");
-        exit;
+        // No hay necesidad de redireccionar aquí
+
     } catch (PDOException $e) {
         // Manejar cualquier error de la base de datos aquí
         echo "Error: " . $e->getMessage();
@@ -62,13 +61,13 @@ if (isset($_POST['link']) && isset($_POST['title'])) {
                     <div class="mb-3 row ">
                         <label for="title" class="col-sm-2 col-form-label">News Title</label>
                         <div class="col-md-8 ">
-                            <input type="text" class="form-control" id="title" name="title">
+                            <input type="text" class="form-control" id="title" name="title" required>
                         </div>
                     </div>
                     <div class="mb-3 row ">
                         <label for="url" class="col-sm-2 col-form-label">News Url</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" id="url" name="link">
+                            <input type="url" class="form-control" id="url" name="link" required>
                         </div>
                         <div class="justify-content-center row ">
                             <button type="submit" class="btn btn-primary col-md-4 m-4">Submit</button>
@@ -129,4 +128,4 @@ if (isset($_POST['link']) && isset($_POST['title'])) {
 
     <script id="VLBar" title="<?php echo $strings['title'] ?>" category-id="1" src="/public/assets/js/vlnav.min.js"></script>
 
-</body
+</body>
