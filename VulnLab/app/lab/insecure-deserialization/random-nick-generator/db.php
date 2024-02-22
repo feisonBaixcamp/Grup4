@@ -1,12 +1,11 @@
 <?php
  
-class db {
+class DB {
 
-    
     private $userlist;
 
-    function __construct() {
-
+    public function __construct() {
+        // Inicializar la lista de usuarios con los datos correspondientes
         $this->userlist = array(
             0 => array(
                 'username' => md5('administrator'),
@@ -17,13 +16,10 @@ class db {
                 'password' => md5('test'),
             )
         );
+    }
 
-      }
-
-   
-
-    function getUsersList(){
-
+    // Método para obtener la lista de usuarios
+    public function getUsersList() {
         return $this->userlist;
     }
 }
