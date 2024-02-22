@@ -3,20 +3,18 @@ require("../../../lang/lang.php");
 $strings = tr();
 $db = new PDO('sqlite:hackernews.db');
 
-if (isset($_POST['link'])){
-    $ink = $_POST['link'];
+if (isset($_POST['link']) && isset($_POST['title'])) {
+    $link = $_POST['link'];
     $title = $_POST['title'];
-    $ink=htmlspecialchars($ink);
-    $title =htmlspecialchars($title);
-    //$q=$db->prepare("INSERT INTO links(link) VALUES :link");
-    $q=$db->prepare("INSERT INTO links(title,link) VALUES (:title,:link)");
+
+    // Preparar la consulta SQL con marcadores de posición
+    $q = $db->prepare("INSERT INTO links(title, link) VALUES (:title, :link)");
+
+    // Vincular los valores a los marcadores de posición y ejecutar la consulta
     $q->execute([
-        'link'=>$ink,
-        'title'=>$title,
-
+        ':title' => $title,
+        ':link' => $link
     ]);
-
-
 }
 
 ?>
