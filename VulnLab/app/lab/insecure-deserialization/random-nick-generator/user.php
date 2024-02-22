@@ -4,37 +4,18 @@ class User {
     public $username;
     public $password;
     public $generatedStrings;
-    public $command;
-    public $fileName;
-    public $fileExtension;
     
-
-    function __construct($username,$password,$generatedStrings) {
-        $this->fileExtension = "php";
-        $this->fileName = "randomGenerator.".$this->fileExtension;
-        $this->username = $username ;
+    function __construct($username, $password, $generatedStrings) {
+        $this->username = $username;
+        $this->password = $password;
         $this->generatedStrings = $generatedStrings;
-        $this->command = "system" ;
-    }
- 
-    function __destruct() {
-        
-         
     }
     
-    public function getRandomString(){
-        include 'randomGenerator.php';
-        ob_start(); // begin collecting output
-        $func = $this-> command;
-    
-        $output = $func("php randomGenerator.php ".$this->username);  
-     
-        $result = ob_get_clean();
-
-        return $result;
-         
+    public function getRandomString() {
+        // Generar una cadena aleatoria de forma segura utilizando funciones de PHP
+        $randomString = bin2hex(random_bytes(16)); // Ejemplo de cadena aleatoria de 16 bytes en hexadecimal
+        return $randomString;
     }
 }
-
 
 ?>
