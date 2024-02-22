@@ -1,7 +1,6 @@
 <?php 
-    error_reporting(0);
-    require("../../../lang/lang.php");
-    $strings = tr();
+require("../../../lang/lang.php");
+$strings = tr();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/css/bootstrap.css">
-    <title><?php echo $strings['title']; ?></title>
+    <title><?php echo htmlspecialchars($strings['title']); ?></title>
     <style>
         p{
             margin-top: 15px;
@@ -25,17 +24,17 @@
                 <div class="col-md-6">
                     <form action="index.php" method="GET">
                         <div class="mb-3">
-                            <label for="country" class="form-label"><?php echo $strings['label']; ?></label>
+                            <label for="country" class="form-label"><?php echo htmlspecialchars($strings['label']); ?></label>
                             <select name="country" id="country" class="form-select">
-                                <option value="france.php"><?php echo $strings['paris']; ?></option>
-                                <option value="germany.php"><?php echo $strings['berlin']; ?></option>
-                                <option value="north_korea.php"><?php echo $strings['pyongyang']; ?></option>
-                                <option value="turkey.php"><?php echo $strings['ankara']; ?></option>
-                                <option value="england.php"><?php echo $strings['london']; ?></option>
+                                <option value="france"><?php echo htmlspecialchars($strings['paris']); ?></option>
+                                <option value="germany"><?php echo htmlspecialchars($strings['berlin']); ?></option>
+                                <option value="north_korea"><?php echo htmlspecialchars($strings['pyongyang']); ?></option>
+                                <option value="turkey"><?php echo htmlspecialchars($strings['ankara']); ?></option>
+                                <option value="england"><?php echo htmlspecialchars($strings['london']); ?></option>
                             </select>
                         </div>
                         <div class="d-grid gap-2">
-                            <button class="btn btn-primary" type="submit"><?php echo $strings['button']; ?></button>
+                            <button class="btn btn-primary" type="submit"><?php echo htmlspecialchars($strings['button']); ?></button>
                         </div>
                     </form>
                 </div>
@@ -45,10 +44,13 @@
                     <div class="mb-3">
                     <p><?php 
                         if(isset($_GET['country'])){
+                            $allowed_pages = array("france", "germany", "north_korea", "turkey", "england");
                             $page = $_GET['country'];
-                            $page = str_replace( array( "http://", "https://" ), "", $page ); 
-                            $page = str_replace( array( "../", "..\"" ), "", $page );
-                            include($page);
+                            if (in_array($page, $allowed_pages)) {
+                                include($page . ".php");
+                            } else {
+                                echo "Invalid selection";
+                            }
                         }
                     ?>
                     </p>
@@ -58,6 +60,6 @@
             </div>
         </div>
     </div>
-    <script id="VLBar" title="<?= $strings['title'] ?>" category-id="6" src="/public/assets/js/vlnav.min.js"></script>
+    <script id="VLBar" title="<?= htmlspecialchars($strings['title']) ?>" category-id="6" src="/public/assets/js/vlnav.min.js"></script>
 </body>
 </html>

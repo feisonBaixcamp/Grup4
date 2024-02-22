@@ -1,34 +1,50 @@
 <?php
-    require("../../../lang/lang.php");
-    $strings = tr();
+require("../../../lang/lang.php");
+$strings = tr();
 
-    if( isset($_POST['submit']) ){
+if(isset($_POST['submit'])){
+    $tmpName = $_FILES['input_image']['tmp_name'];
+    $fileName = $_FILES['input_image']['name'];
 
-        $tmpName = $_FILES['input_image']['tmp_name'];
-        $fileName = $_FILES['input_image']['name'];
+    if(!empty($fileName)){
+        // Directorio donde se almacenarán las imágenes
+        $uploadDirectory = "uploads/";
+        
+        // Obtiene el tipo MIME del archivo
+        $fileType = $_FILES['input_image']['type'];
 
-        if(!empty($fileName)){
-            if(!file_exists("uploads")){
-                mkdir("uploads");
+        // Lista de tipos de archivos permitidos
+        $allowedMimeTypes = array("image/jpeg", "image/png", "image/gif");
+
+        // Verifica si el tipo MIME del archivo está en la lista de tipos permitidos
+        if(in_array($fileType, $allowedMimeTypes)){
+            // Verifica si el directorio de carga existe, si no, lo crea
+            if(!file_exists($uploadDirectory)){
+                mkdir($uploadDirectory);
             }
-    
-            $uploadPath = "uploads/".$fileName;
-    
-            if( @move_uploaded_file($tmpName,$uploadPath) ){
+
+            // Genera un nombre de archivo único para evitar posibles conflictos de nombres
+            $uniqueFileName = uniqid().'_'.$fileName;
+
+            // Ruta completa del archivo cargado
+            $uploadPath = $uploadDirectory.$uniqueFileName;
+
+            // Mueve el archivo cargado al directorio de carga
+            if(move_uploaded_file($tmpName, $uploadPath)){
                 $status = "success";
-                
-            }else{
+            } else {
                 $status = "unsuccess";
             }
-        }else{
-            $status = "empty";
+        } else {
+            // Tipo de archivo no permitido
+            $status = "blocked";
         }
-
-
+    } else {
+        // No se seleccionó ningún archivo
+        $status = "empty";
     }
-
+}
 ?>
-
 
 <!DOCTYPE html>
 <html lang="<?= $strings['lang']; ?>">
@@ -78,6 +94,12 @@
                                 echo '<div class="alert alert-danger" role="alert">
                                 <b>'.$strings['alert_unsuccess'].'</b> 
                                 </div>';
+                            }
+                            if( $status == "blocked" ){
+                                echo '<div class="alert alert-danger" role="alert">
+                                <b>'.$strings['alert_blocked'].'</b> <hr>'
+                                .$strings['alert_blocked_type'].
+                                '</div>';
                             }
                             if( $status == "empty" ){
                                 echo '<div class="alert alert-danger" role="alert">
