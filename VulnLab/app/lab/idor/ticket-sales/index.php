@@ -1,55 +1,52 @@
 <?php
+require("../../../lang/lang.php");
+$strings = tr();
+
+$db = new PDO('sqlite:database.db');
+$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+session_start();
+$user_id = $_SESSION['user_id'] ?? null;
+
+if (!$user_id) {
+    echo "Please login to continue.";
+    exit;
+}
+
+$query = $db->prepare("SELECT * FROM idor_buy_tickets WHERE id=:user_id");
+$query->execute(['user_id' => $user_id]);
+$account = $query->fetch();
+$money_in_account = $account['money'];
+$ticket_price = $account['ticket'];
+
+if (isset($_POST['amount'])) {
+    $amount = $_POST['amount'];
     
-    require("../../../lang/lang.php");
-    $strings = tr();
+    if ($amount <= 0) {
+        $message0 = '<div class="alert alert-danger" role="alert">' . $strings["alert_danger"] . '</div>';
+    } else {
+        $total = $ticket_price * $amount;
 
-    $db = new PDO('sqlite:database.db');
+        if ($money_in_account >= $total) {
+            $money_in_account -= $total;
 
-    $query = $db -> prepare("SELECT * FROM idor_buy_tickets WHERE id=1");
-    $query -> execute();
-    $account = $query -> fetch();
-    $money_in_account = $account['money'];
-    $ticket_price = $account['ticket'];
+            $query2 = $db->prepare("UPDATE idor_buy_tickets SET money = :new_money WHERE id = :user_id");
+            $update = $query2->execute([
+                'new_money' => $money_in_account,
+                'user_id' => $user_id
+            ]);
 
-
-    if( isset($_POST['amount']) ){
-        
-        if($_POST['amount'] <= 0){
-
-            $message0 = '<div class="alert alert-danger" role="alert">'.$strings["alert_danger"].'</div>';
-            
-        }else{
-
-            $total = (int)$_POST['ticket_money']*(int)$_POST['amount'];
-
-            if($total < 0){
-                $total = -1 * $total;
+            if ($update) {
+                $message1 = '<div class="alert alert-success" role="alert"> <b>' . $strings["alert_success"] . '</b> <br> <hr>' .
+                $strings["alert_number_of_tickets"] . '<b> ' . $amount . '</b> <br>' .
+                $strings["alert_money"] . '<b> ' . $total . ' ' . $strings["money_symbol"] . '</b> </div>';
             }
-            
-            if( $account['money'] >= $total ){
-                $money_in_account = $money_in_account - $total;
-    
-                $query2 = $db -> prepare("UPDATE idor_buy_tickets SET money=:new_money WHERE id=1");
-                $update = $query2 -> execute(array(
-                    'new_money' => $money_in_account
-                ));
-                
-                if($update){
-                    $message1 = '<div class="alert alert-success" role="alert"> <b>'.$strings["alert_success"].'</b> <br> <hr>'.
-                    $strings["alert_number_of_tickets"].'<b> '.$_POST['amount'].'</b> <br>'.
-                    $strings["alert_money"].'<b> '.$total.' '.$strings["money_symbol"].'</b> </div>';
-                }
-            }else{
-                $message2 = '<div class="alert alert-danger" role="alert">'.$strings["alert_danger2"].'</div>';
-            }
-
+        } else {
+            $message2 = '<div class="alert alert-danger" role="alert">' . $strings["alert_danger2"] . '</div>';
         }
-
     }
-
-
+}
 ?>
-
 
 <!DOCTYPE html>
 <html lang="<?= $strings['lang']; ?>">
@@ -72,7 +69,7 @@
 
                     <h1> <?= $strings["title"]; ?> </h1>
 
-                    <a href="reset.php"><button type="button" href="" class="btn btn-secondary btn-sm"><?= $strings["reset"]; ?></button></a>
+                    <a href="reset.php"><button type="button" class="btn btn-secondary btn-sm"><?= $strings["reset"]; ?></button></a>
                     
                 </div>
                 <div class="col-md-3"></div>
@@ -93,13 +90,13 @@
                     <h3 class="mb-3"><?= $strings["middle_title"]; ?></h3>
 
                     <?php 
-                    if( isset($message0) ){
+                    if (isset($message0)) {
                         echo $message0;
                     }
-                    if( isset($message1) ){
+                    if (isset($message1)) {
                         echo $message1;
                     }
-                    if( isset($message2) ){
+                    if (isset($message2)) {
                         echo $message2;
                     }
                     ?>
@@ -111,19 +108,4 @@
                             <input class="form-control" type="hidden" name="ticket_money" value="<?php echo $ticket_price; ?>">
                         </div>
                         <div class="d-grid gap-2">
-                            <button class="btn btn-primary" type="submit"><?= $strings["button"]; ?></button>
-                        </div>
-                    </form>
-
-                </div>
-                <div class="col-md-3"></div>
-            </div>
-
-        </div>
-
-    </div>
-    <script id="VLBar" title="<?= $strings['title']; ?>" category-id="3" src="/public/assets/js/vlnav.min.js"></script>
-</body>
-</html>
-
-
+                            <button class="btn btn-primary" type="submit"><?= $strings["button
