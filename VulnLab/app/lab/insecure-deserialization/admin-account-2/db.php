@@ -1,30 +1,26 @@
 <?php
-class db {
 
-  
+class DB {
     private $userlist;
 
     function __construct() {
         $this->userlist = array(
             0 => array(
-                'username' => md5('administrator'),
-                'password' => md5('a2T%tq+<=VuLJh8,}fBwU@Qttn+YR{rq'),
-                'isAdmin' => 1
+                'username' => 'administrator',
+                'password' => 'a2T%tq+<=VuLJh8,}fBwU@Qttn+YR{rq',
+                'isAdmin' => true
             ),
             1 => array(
-                'username' => md5('test'),
-                'password' => md5('test'),
-                'isAdmin' => 0
+                'username' => 'test',
+                'password' => 'test',
+                'isAdmin' => false
             )
         );
+    }
 
-      }
-
-   
-
-    function getUsersList(){
-
+    function getUsersList() {
         return $this->userlist;
     }
 }
+
 ?>
